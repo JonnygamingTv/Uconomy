@@ -1,9 +1,21 @@
-﻿namespace fr34kyn01535.Uconomy
+﻿using Rocket.API;
+
+namespace Uconomy
 {
-    public class UconomyConfiguration
+    public class UconomyConfiguration : IRocketPluginConfiguration
     {
-        public string MySqlConnectionString { get; set; } = "SERVER=;DATABASE=;UID=;PASSWORD=;PORT=;charset=utf8";
-        public decimal InitialBalance { get; set; } = 30;
-        public string MoneyName { get; set; } = "Credits";
+        public string MySqlConnectionString = "SERVER=;DATABASE=;UID=;PASSWORD=;PORT=;charset=utf8";
+        public string DatabaseAddress = "127.0.0.1";
+        public string DatabaseName = "unturned";
+        public string DatabaseUsername = "admin";
+        public string DatabasePassword = "root";
+        public int DatabasePort = 3306;
+        public string UconomyTableName = "Economy";
+        public decimal InitialBalance = 30;
+        public string MoneyName = "Credits";
+
+        public void LoadDefaults()
+        {
+        }
     }
 }

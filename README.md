@@ -8,8 +8,23 @@ Usage:
 /balance: This will show the player balance.
 /pay <player> <amount>: Trasnfer a specific amount of your balance to another player
 
-Requirements:
-- Mysql
+Configuring:
+Don't forget to add the commands /balance and /pay into ``Permissions.config.xml``
+```
+<Group>
+  <Id>default</Id>
+  <DisplayName>Guest</DisplayName>
+  <Prefix />
+  <Suffix />
+  <Color>white</Color>
+  <Members />
+  <Priority>100</Priority>
+  <Permissions>
+    <Permission Cooldown="0">balance</Permission>
+    <Permission Cooldown="0">pay</Permission>
+  </Permissions>
+</Group>
+```
 
 # Building
 

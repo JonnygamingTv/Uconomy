@@ -13,13 +13,13 @@
     <PackageTags>RocketMod Universal</PackageTags>
 	<PackageAuthors>LeandroTheDev, Sven Mawby&lt;fr34kyn01535@bam.yt&gt;, Enes Sadık Özbek &lt;esozbek.me&gt;</PackageAuthors>
     <PackageOwners>LeandroTheDev, Sven Mawby&lt;fr34kyn01535@bam.yt&gt;</PackageOwners>
-    <Version>1.0.0</Version>
-	<PackageVersion>1.0.0</PackageVersion>
+    <Version>2.0.0</Version>
+	<PackageVersion>2.0.0</PackageVersion>
     <Authors>LeandroTheDev, Sven Mawby&lt;fr34kyn01535@bam.yt&gt;, Enes Sadık Özbek &lt;esozbek.me&gt;</Authors>
     <Description>Simple economy plugin.</Description>
     <Copyright>LeandroTheDev, Sven Mawby &lt;fr34kyn01535@bam.yt&gt;</Copyright>
-    <AssemblyVersion>1.0.0</AssemblyVersion>
-    <FileVersion>1.0.0</FileVersion>
+    <AssemblyVersion>2.0.0</AssemblyVersion>
+    <FileVersion>2.0.0</FileVersion>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
   
@@ -45,10 +45,9 @@
     <Reference Include="UnityEngine">
       <HintPath>Libs\UnityEngine.dll</HintPath>
     </Reference>
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Folder Include="Commands\" />
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>Libs\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
   </ItemGroup> 
   
 </Project>

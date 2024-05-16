@@ -4,7 +4,6 @@ namespace Uconomy
 {
     public class UconomyConfiguration : IRocketPluginConfiguration
     {
-        public string MySqlConnectionString = "SERVER=;DATABASE=;UID=;PASSWORD=;PORT=;charset=utf8";
         public string DatabaseAddress = "127.0.0.1";
         public string DatabaseName = "unturned";
         public string DatabaseUsername = "admin";

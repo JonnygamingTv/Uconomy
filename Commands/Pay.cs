@@ -32,12 +32,14 @@ namespace Uconomy.Commands
             if (payingPlayer is null)
             {
                 UnturnedChat.Say(caller, UconomyPlugin.instance.Translate("commnad_error_null"));
+                return;
             }
             // Get Received player
             UnturnedPlayer receivedPlayer = UnturnedPlayer.FromName(command[0]);
             if (receivedPlayer is null)
             {
                 UnturnedChat.Say(caller, UconomyPlugin.instance.Translate("command_pay_error_player_not_found"));
+                return;
             }
             // Try to pay
             bool success;

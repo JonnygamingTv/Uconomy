@@ -49,7 +49,7 @@ namespace Uconomy
             }
             catch (Exception exception)
             {
-                Logger.LogError($"Database Crashed, reason: {exception.Message}");
+                Logger.LogError($"[Uconomy] Database Crashed, reason: {exception.Message}");
             }
             return mySqlConnection;
         }
@@ -78,7 +78,7 @@ namespace Uconomy
             }
             catch (Exception exception)
             {
-                Logger.LogError($"[Uconomy]Database Crashed by {playerId} from function AddNewPlayer, reason: {exception.Message}");
+                Logger.LogError($"[Uconomy] Database Crashed by {playerId} from function AddNewPlayer, reason: {exception.Message}");
             }
         }
 
@@ -105,7 +105,7 @@ namespace Uconomy
             }
             catch (Exception exception)
             {
-                Logger.LogError($"[ZaupShop] Database Crashed by {playerId} from function GetBalance, reason: {exception.Message}");
+                Logger.LogError($"[Uconomy] Database Crashed by {playerId} from function GetBalance, reason: {exception.Message}");
             }
             return num;
         }
@@ -149,14 +149,14 @@ namespace Uconomy
             {
                 MySqlConnection mySqlConnection = CreateConnection();
                 MySqlCommand mySqlCommand = mySqlConnection.CreateCommand();
-                mySqlCommand.CommandText = $"update `{_uconomy.Configuration.Instance.UconomyTableName}` set `balance` = `balance` - {cost} where `id` = {id};";
+                mySqlCommand.CommandText = $"update `{_uconomy.Configuration.Instance.UconomyTableName}` set `balance` = `balance` - {cost} where `steamId` = {id};";
                 mySqlConnection.Open();
                 mySqlCommand.ExecuteNonQuery();
                 mySqlConnection.Close();
             }
             catch (Exception exception)
             {
-                Logger.LogError($"[ZaupShop] Database Crashed by {id} from function RemoveBalance, reason: {exception.Message}");
+                Logger.LogError($"[Uconomy] Database Crashed by {id} from function RemoveBalance, reason: {exception.Message}");
             }
         }
 
@@ -171,14 +171,14 @@ namespace Uconomy
             {
                 MySqlConnection mySqlConnection = CreateConnection();
                 MySqlCommand mySqlCommand = mySqlConnection.CreateCommand();
-                mySqlCommand.CommandText = $"update `{_uconomy.Configuration.Instance.UconomyTableName}` set `balance` = `balance` + {quantity} where `id` = {id};";
+                mySqlCommand.CommandText = $"update `{_uconomy.Configuration.Instance.UconomyTableName}` set `balance` = `balance` + {quantity} where `steamId` = {id};";
                 mySqlConnection.Open();
                 mySqlCommand.ExecuteNonQuery();
                 mySqlConnection.Close();
             }
             catch (Exception exception)
             {
-                Logger.LogError($"[ZaupShop] Database Crashed by {id} from function AddBalance, reason: {exception.Message}");
+                Logger.LogError($"[Uconomy] Database Crashed by {id} from function AddBalance, reason: {exception.Message}");
             }
         }
     }

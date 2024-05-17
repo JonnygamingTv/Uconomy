@@ -26,7 +26,7 @@ namespace Uconomy.Commands
             {
                 UnturnedChat.Say(caller, UconomyPlugin.instance.Translate("commnad_error_null"));
             }
-            UnturnedChat.Say(caller, UconomyPlugin.instance.Translate("command_balance_show", UconomyPlugin.instance.Database.GetBalance(player.Id), UconomyPlugin.instance.Configuration.Instance.MoneyName));
+            UnturnedChat.Say(caller, UconomyPlugin.instance.Translate("command_balance_show", UconomyPlugin.instance.Database.GetBalance(player.Id), UconomyPlugin.instance.Configuration.Instance.UconomyCurrencyName));
         }
     }
 }

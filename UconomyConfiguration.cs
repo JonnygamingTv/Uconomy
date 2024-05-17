@@ -9,9 +9,9 @@ namespace Uconomy
         public string DatabaseUsername = "admin";
         public string DatabasePassword = "root";
         public int DatabasePort = 3306;
-        public string UconomyTableName = "Economy";
+        public string UconomyTableName = "uconomy";
         public decimal InitialBalance = 30;
-        public string MoneyName = "Credits";
+        public string UconomyCurrencyName = "Credits";
 
         public void LoadDefaults()
         {

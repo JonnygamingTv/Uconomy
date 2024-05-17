@@ -1,9 +1,8 @@
 ﻿using Rocket.API.Collections;
+using Rocket.Core.Logging;
 using Rocket.Core.Plugins;
 using Rocket.Unturned;
 using Rocket.Unturned.Player;
-using SDG.Unturned;
-using System;
 
 namespace Uconomy
 {
@@ -17,6 +16,7 @@ namespace Uconomy
             base.LoadPlugin();
             U.Events.OnPlayerConnected += OnPlayerConnected;
             instance = this;
+            Logger.Log("Uconomy instanciated, restored by LeandroTheDev");
         }
 
         private void OnPlayerConnected(UnturnedPlayer player)

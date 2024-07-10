@@ -6,7 +6,7 @@ There are 2 commands: /balance, and /pay.
 
 Usage:
 /balance: This will show the player balance.
-/pay <player> <amount>: Trasnfer a specific amount of your balance to another player
+/pay <player> <amount>: Transfer a specific amount of your balance to another player
 
 Configuring:
 Don't forget to add the commands /balance and /pay into ``Permissions.config.xml``

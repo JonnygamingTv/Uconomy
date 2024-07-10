@@ -1,36 +1,31 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Rocket.API.DependencyInjection;
-using Rocket.API.Economy;
-using Rocket.API.Eventing;
-using Rocket.Core.Player.Events;
+﻿using Rocket.API.Collections;
+using Rocket.Core.Logging;
 using Rocket.Core.Plugins;
+using Rocket.Unturned;
+using Rocket.Unturned.Player;
 
-namespace fr34kyn01535.Uconomy
+namespace Uconomy
 {
-    public class UconomyPlugin : Plugin<UconomyConfiguration>, IEventListener<PlayerConnectedEvent>
+    public class UconomyPlugin : RocketPlugin<UconomyConfiguration>
     {
-        public UconomyPlugin(IDependencyContainer container) : base("Uconomy", container)
+        public static UconomyPlugin instance;
+        public DatabaseMgr Database;
+        public override void LoadPlugin()
         {
+            Database = new(this);
+            base.LoadPlugin();
+            U.Events.OnPlayerConnected += OnPlayerConnected;
+            instance = this;
+            Logger.Log("Uconomy instanciated, restored by LeandroTheDev");
         }
 
-        protected override async Task OnActivate(bool isFromReload)
+        private void OnPlayerConnected(UnturnedPlayer player)
         {
-            using (var context = new UconomyDbContext(this))
-            {
-                await context.Database.MigrateAsync();
-            }
-
-            EventBus.AddEventListener(this, this);
+            // Add player if not exist
+            Database.AddNewPlayer(player.Id, Configuration.Instance.InitialBalance);
         }
 
-        public async Task HandleEventAsync(IEventEmitter emitter, PlayerConnectedEvent @event)
-        {
-            await ((UconomyEconomyProvider)Container.Resolve<IEconomyProvider>()).CreateAccountAsync(@event.Player.User);
-        }
-
-        public override Dictionary<string, string> DefaultTranslations => new Dictionary<string, string>
+        public override TranslationList DefaultTranslations => new()
         {
             {"command_balance_show", "Your current balance is: {0} {1}"},
             {"command_pay_invalid", "Invalid arguments"},
@@ -38,8 +33,8 @@ namespace fr34kyn01535.Uconomy
             {"command_pay_error_invalid_amount", "Invalid amount"},
             {"command_pay_error_cant_afford", "Your balance does not allow this payment"},
             {"command_pay_error_player_not_found", "Failed to find player"},
-            {"command_pay_private", "You paid {0} {1} {2}"},
-            {"command_pay_console", "You received a payment of {0} {1} "},
+            {"command_pay_private", "You paid {0} to {1}"},
+            {"command_pay_console", "You received a payment of {0} from {1} "},
             {"command_pay_other_private", "You received a payment of {0} {1} from {2}"}
         };
     }

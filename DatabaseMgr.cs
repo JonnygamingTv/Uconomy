@@ -1,6 +1,8 @@
 ﻿using System;
 using MySql.Data.MySqlClient;
 using Rocket.Core.Logging;
+using SDG.Unturned;
+using Steamworks;
 
 namespace Uconomy
 {
@@ -90,6 +92,7 @@ namespace Uconomy
         public decimal GetBalance(string playerId)
         {
             decimal num = new(0);
+            if (_uconomy.Configuration.Instance.xpMode) return (decimal)Rocket.Unturned.Player.UnturnedPlayer.FromCSteamID(new CSteamID(UInt64.Parse(playerId))).Experience;
             try
             {
                 MySqlConnection mySqlConnection = CreateConnection();
@@ -145,6 +148,15 @@ namespace Uconomy
         /// <param name="cost"></param>
         public void RemoveBalance(string id, decimal cost)
         {
+            if (_uconomy.Configuration.Instance.BalanceFgEffectKey != 0)
+            {
+                EffectManager.sendUIEffect(_uconomy.Configuration.Instance.BalanceFgEffectId, _uconomy.Configuration.Instance.BalanceFgEffectKey, true, (GetBalance(id) - cost).ToString());
+            }
+            if (_uconomy.Configuration.Instance.xpMode)
+            {
+                Rocket.Unturned.Player.UnturnedPlayer.FromCSteamID(new CSteamID(UInt64.Parse(id))).Experience -= (uint) cost;
+                return;
+            }
             try
             {
                 MySqlConnection mySqlConnection = CreateConnection();
@@ -167,6 +179,15 @@ namespace Uconomy
         /// <param name="quantity"></param>
         public void AddBalance(string id, decimal quantity)
         {
+            if (_uconomy.Configuration.Instance.BalanceFgEffectKey != 0)
+            {
+                EffectManager.sendUIEffect(_uconomy.Configuration.Instance.BalanceFgEffectId, _uconomy.Configuration.Instance.BalanceFgEffectKey, true, (GetBalance(id)+quantity).ToString());
+            }
+            if (_uconomy.Configuration.Instance.xpMode)
+            {
+                Rocket.Unturned.Player.UnturnedPlayer.FromCSteamID(new CSteamID(UInt64.Parse(id))).Experience += (uint)quantity;
+                return;
+            }
             try
             {
                 MySqlConnection mySqlConnection = CreateConnection();

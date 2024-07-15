@@ -4,25 +4,28 @@ using Rocket.Core.Logging;
 using Rocket.Core.Plugins;
 using Rocket.Unturned;
 using Rocket.Unturned.Player;
+using SDG.Unturned;
 
 namespace Uconomy
 {
     public class UconomyPlugin : RocketPlugin<UconomyConfiguration>
     {
-        public static UconomyPlugin instance;
+        public static UconomyPlugin instance { get; private set; }
         public DatabaseMgr Database;
-        public override void LoadPlugin()
+        protected override void Load()
         {
-            Database = new(this);
-            base.LoadPlugin();
-            U.Events.OnPlayerConnected += OnPlayerConnected;
             instance = this;
-            Logger.Log("Uconomy loaded. Restored by LeandroTheDev");
+            Database = new(this);
+            if(!Configuration.Instance.xpMode) U.Events.OnPlayerConnected += OnPlayerConnected;
+            else if (Configuration.Instance.InitialBalance != 0) U.Events.OnPlayerConnected += OnPlayerConnected2;
+            instance = this;
+            Logger.Log("Uconomy instanciated, restored by LeandroTheDev");
         }
-        public override void UnloadPlugin(PluginState state = PluginState.Unloaded)
+        protected override void Unload()
         {
-            base.UnloadPlugin(state);
-            U.Events.OnPlayerConnected -= OnPlayerConnected;
+            Database = null;
+            if (!Configuration.Instance.xpMode) U.Events.OnPlayerConnected -= OnPlayerConnected;
+            else if (Configuration.Instance.InitialBalance != 0) U.Events.OnPlayerConnected -= OnPlayerConnected2;
             Logger.Log("Uconomy unloaded.");
         }
 
@@ -30,9 +33,21 @@ namespace Uconomy
         {
             // Add player if not exist
             Database.AddNewPlayer(player.Id, Configuration.Instance.InitialBalance);
+            if(Configuration.Instance.BalanceFgEffectKey != 0)
+            {
+                EffectManager.sendUIEffect(Configuration.Instance.BalanceFgEffectId, Configuration.Instance.BalanceFgEffectKey, true, Database.GetBalance(player.Id).ToString());
+            }
+        }
+        private void OnPlayerConnected2(UnturnedPlayer player)
+        {
+            if(player.Experience == 0) player.Experience = (uint)Configuration.Instance.InitialBalance;
+            if (Configuration.Instance.BalanceFgEffectKey != 0)
+            {
+                EffectManager.sendUIEffect(Configuration.Instance.BalanceFgEffectId, Configuration.Instance.BalanceFgEffectKey, true, Database.GetBalance(player.Id).ToString());
+            }
         }
 
-        public override TranslationList DefaultTranslations => new()
+        public override TranslationList DefaultTranslations => new TranslationList
         {
             {"command_balance_show", "Your current balance is: {0} {1}"},
             {"command_pay_invalid", "Invalid arguments"},

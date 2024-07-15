@@ -57,7 +57,7 @@ namespace Uconomy
             try
             {
                 _mySqlConnection = new MySqlConnection(string.Format("SERVER={0};DATABASE={1};UID={2};PASSWORD={3};PORT={4};", _uconomy.Configuration.Instance.DatabaseAddress, _uconomy.Configuration.Instance.DatabaseName, _uconomy.Configuration.Instance.DatabaseUsername, _uconomy.Configuration.Instance.DatabasePassword, _uconomy.Configuration.Instance.DatabasePort));
-                    Open();
+                _mySqlConnection.Open();
             }
             catch (Exception exception)
             {

@@ -1,4 +1,5 @@
-﻿using Rocket.API.Collections;
+﻿using Rocket.API;
+using Rocket.API.Collections;
 using Rocket.Core.Logging;
 using Rocket.Core.Plugins;
 using Rocket.Unturned;
@@ -16,7 +17,13 @@ namespace Uconomy
             base.LoadPlugin();
             U.Events.OnPlayerConnected += OnPlayerConnected;
             instance = this;
-            Logger.Log("Uconomy instanciated, restored by LeandroTheDev");
+            Logger.Log("Uconomy loaded. Restored by LeandroTheDev");
+        }
+        public override void UnloadPlugin(PluginState state = PluginState.Unloaded)
+        {
+            base.UnloadPlugin(state);
+            U.Events.OnPlayerConnected -= OnPlayerConnected;
+            Logger.Log("Uconomy unloaded.");
         }
 
         private void OnPlayerConnected(UnturnedPlayer player)

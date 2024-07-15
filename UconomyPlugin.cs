@@ -23,6 +23,7 @@ namespace Uconomy
         }
         protected override void Unload()
         {
+            Database.Close();
             Database = null;
             if (!Configuration.Instance.xpMode) U.Events.OnPlayerConnected -= OnPlayerConnected;
             else if (Configuration.Instance.InitialBalance != 0) U.Events.OnPlayerConnected -= OnPlayerConnected2;

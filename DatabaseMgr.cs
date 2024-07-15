@@ -9,11 +9,20 @@ namespace Uconomy
     public class DatabaseMgr
     {
         private readonly UconomyPlugin _uconomy;
+        private MySqlConnection _mySqlConnection = null;
 
         internal DatabaseMgr(UconomyPlugin uconomy)
         {
             _uconomy = uconomy;
             CheckSchema();
+        }
+        public void Close()
+        {
+            _mySqlConnection.Close();
+        }
+        public void Open()
+        {
+            if(_mySqlConnection.State != System.Data.ConnectionState.Open) _mySqlConnection.Open();
         }
 
         private void CheckSchema()
@@ -22,7 +31,7 @@ namespace Uconomy
             {
                 MySqlConnection mySqlConnection = CreateConnection();
                 MySqlCommand mySqlCommand = mySqlConnection.CreateCommand();
-                mySqlConnection.Open();
+                //Open();
                 mySqlCommand.CommandText = string.Concat(
                 "CREATE TABLE IF NOT EXISTS `",
                 _uconomy.Configuration.Instance.UconomyTableName,
@@ -34,7 +43,7 @@ namespace Uconomy
                 ");"
             );
                 mySqlCommand.ExecuteNonQuery();
-                mySqlConnection.Close();
+                //mySqlConnection.Close();
             }
             catch (Exception exception)
             {
@@ -44,16 +53,17 @@ namespace Uconomy
 
         public MySqlConnection CreateConnection()
         {
-            MySqlConnection mySqlConnection = null;
+            if(_mySqlConnection == null || _mySqlConnection.State != System.Data.ConnectionState.Open)
             try
             {
-                mySqlConnection = new MySqlConnection(string.Format("SERVER={0};DATABASE={1};UID={2};PASSWORD={3};PORT={4};", _uconomy.Configuration.Instance.DatabaseAddress, _uconomy.Configuration.Instance.DatabaseName, _uconomy.Configuration.Instance.DatabaseUsername, _uconomy.Configuration.Instance.DatabasePassword, _uconomy.Configuration.Instance.DatabasePort));
+                _mySqlConnection = new MySqlConnection(string.Format("SERVER={0};DATABASE={1};UID={2};PASSWORD={3};PORT={4};", _uconomy.Configuration.Instance.DatabaseAddress, _uconomy.Configuration.Instance.DatabaseName, _uconomy.Configuration.Instance.DatabaseUsername, _uconomy.Configuration.Instance.DatabasePassword, _uconomy.Configuration.Instance.DatabasePort));
+                    Open();
             }
             catch (Exception exception)
             {
                 Logger.LogError($"[Uconomy] Database Crashed, reason: {exception.Message}");
             }
-            return mySqlConnection;
+            return _mySqlConnection;
         }
 
         /// <summary>
@@ -72,11 +82,11 @@ namespace Uconomy
                 // Command: Insert new player only if not exist the same steamId
                 mySqlCommand.CommandText = string.Concat("Insert ignore into `", _uconomy.Configuration.Instance.UconomyTableName, "` (`steamId`, `balance`, `lastUpdated`) VALUES ('", playerId, "', '", balance, "', '", DateTime.Now.ToShortDateString(), "');");
                 // Try to connect
-                mySqlConnection.Open();
+                //Open();
                 // Execute the command
                 mySqlCommand.ExecuteNonQuery();
                 // Close connection
-                mySqlConnection.Close();
+                //mySqlConnection.Close();
             }
             catch (Exception exception)
             {
@@ -98,13 +108,13 @@ namespace Uconomy
                 MySqlConnection mySqlConnection = CreateConnection();
                 MySqlCommand mySqlCommand = mySqlConnection.CreateCommand();
                 mySqlCommand.CommandText = string.Concat("select `balance` from `", _uconomy.Configuration.Instance.UconomyTableName, "` where `steamId` = '", playerId, "';");
-                mySqlConnection.Open();
+                //mySqlConnection.Open();
                 object obj = mySqlCommand.ExecuteScalar();
                 if (obj != null)
                 {
                     decimal.TryParse(obj.ToString(), out num);
                 }
-                mySqlConnection.Close();
+                //mySqlConnection.Close();
             }
             catch (Exception exception)
             {
@@ -162,9 +172,9 @@ namespace Uconomy
                 MySqlConnection mySqlConnection = CreateConnection();
                 MySqlCommand mySqlCommand = mySqlConnection.CreateCommand();
                 mySqlCommand.CommandText = $"update `{_uconomy.Configuration.Instance.UconomyTableName}` set `balance` = `balance` - {cost} where `steamId` = {id};";
-                mySqlConnection.Open();
+                //mySqlConnection.Open();
                 mySqlCommand.ExecuteNonQuery();
-                mySqlConnection.Close();
+                //mySqlConnection.Close();
             }
             catch (Exception exception)
             {
@@ -193,9 +203,9 @@ namespace Uconomy
                 MySqlConnection mySqlConnection = CreateConnection();
                 MySqlCommand mySqlCommand = mySqlConnection.CreateCommand();
                 mySqlCommand.CommandText = $"update `{_uconomy.Configuration.Instance.UconomyTableName}` set `balance` = `balance` + {quantity} where `steamId` = {id};";
-                mySqlConnection.Open();
+                //mySqlConnection.Open();
                 mySqlCommand.ExecuteNonQuery();
-                mySqlConnection.Close();
+                //mySqlConnection.Close();
             }
             catch (Exception exception)
             {

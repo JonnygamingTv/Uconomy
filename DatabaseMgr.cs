@@ -101,8 +101,8 @@ namespace Uconomy
         /// <returns></returns>
         public decimal GetBalance(string playerId)
         {
-            decimal num = new(0);
             if (_uconomy.Configuration.Instance.xpMode) return (decimal)Rocket.Unturned.Player.UnturnedPlayer.FromCSteamID(new CSteamID(UInt64.Parse(playerId))).Experience;
+            decimal num = new(0);
             try
             {
                 MySqlConnection mySqlConnection = CreateConnection();

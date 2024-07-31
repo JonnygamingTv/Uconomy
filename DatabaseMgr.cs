@@ -1,19 +1,18 @@
 ﻿using System;
 using MySql.Data.MySqlClient;
 using Rocket.Core.Logging;
-using SDG.Unturned;
 using Steamworks;
 
-namespace Uconomy
+namespace ZaupShop
 {
     public class DatabaseMgr
     {
-        private readonly UconomyPlugin _uconomy;
+        private readonly ZaupShop _zaupShop;
         private MySqlConnection _mySqlConnection = null;
 
-        internal DatabaseMgr(UconomyPlugin uconomy)
+        internal DatabaseMgr(ZaupShop zaupShop)
         {
-            _uconomy = uconomy;
+            _zaupShop = zaupShop;
             CheckSchema();
         }
         public void Close()
@@ -31,23 +30,53 @@ namespace Uconomy
             {
                 MySqlConnection mySqlConnection = CreateConnection();
                 MySqlCommand mySqlCommand = mySqlConnection.CreateCommand();
-                //Open();
-                mySqlCommand.CommandText = string.Concat(
-                "CREATE TABLE IF NOT EXISTS `",
-                _uconomy.Configuration.Instance.UconomyTableName,
-                "` (",
-                "`steamId` VARCHAR(32) NOT NULL,",
-                "`balance` DOUBLE NOT NULL,",
-                "`lastUpdated` VARCHAR(32) NOT NULL,",
-                "PRIMARY KEY (`steamId`)",
-                ");"
-            );
-                mySqlCommand.ExecuteNonQuery();
+                mySqlCommand.CommandText = string.Concat("show tables like '", _zaupShop.Configuration.Instance.ItemShopTableName, "'");
+                //mySqlConnection.Open();
+                if (mySqlCommand.ExecuteScalar() == null)
+                {
+                    mySqlCommand.CommandText = string.Concat("CREATE TABLE `", _zaupShop.Configuration.Instance.ItemShopTableName, "` (`id` int(6) NOT NULL,`itemname` varchar(32) NOT NULL,`cost` decimal(15,2) NOT NULL DEFAULT '20.00',`buyback` decimal(15,2) NOT NULL DEFAULT '0.00',PRIMARY KEY (`id`)) ");
+                    mySqlCommand.ExecuteNonQuery();
+                }
                 //mySqlConnection.Close();
             }
             catch (Exception exception)
             {
-                Logger.LogError($"[Uconomy] Database Crashed by Console when trying to create or check existing table {_uconomy.Configuration.Instance.UconomyTableName}, reason: {exception.Message}");
+                Logger.LogError($"[ZaupShop] Database Crashed by Console when trying to create or check existing table {_zaupShop.Configuration.Instance.ItemShopTableName}, reason: {exception.Message}");
+            }
+            try
+            {
+                MySqlConnection mySqlConnection = CreateConnection();
+                MySqlCommand mySqlCommand = mySqlConnection.CreateCommand();
+                mySqlCommand.CommandText = string.Concat("show tables like '", _zaupShop.Configuration.Instance.VehicleShopTableName, "'");
+                //mySqlConnection.Open();
+                if (mySqlCommand.ExecuteScalar() == null)
+                {
+                    mySqlCommand.CommandText = string.Concat("CREATE TABLE `", _zaupShop.Configuration.Instance.VehicleShopTableName, "` (`id` int(6) NOT NULL,`vehiclename` varchar(32) NOT NULL,`cost` decimal(15,2) NOT NULL DEFAULT '100.00',PRIMARY KEY (`id`)) ");
+                    mySqlCommand.ExecuteNonQuery();
+                }
+                //mySqlConnection.Close();
+            }
+            catch (Exception exception)
+            {
+                Logger.LogError($"[ZaupShop] Database Crashed by Console when trying to create or check existing table {_zaupShop.Configuration.Instance.VehicleShopTableName}, reason: {exception.Message}");
+            }
+            try
+            {
+                MySqlConnection mySqlConnection = CreateConnection();
+                MySqlCommand mySqlCommand = mySqlConnection.CreateCommand();
+                mySqlCommand.CommandText = string.Concat("show columns from `", _zaupShop.Configuration.Instance.ItemShopTableName, "` like 'buyback'");
+                //mySqlConnection.Open();
+                if (mySqlCommand.ExecuteScalar() == null)
+                {
+                    mySqlCommand.CommandText = string.Concat("ALTER TABLE `", _zaupShop.Configuration.Instance.ItemShopTableName, "` ADD `buyback` decimal(15,2) NOT NULL DEFAULT '0.00'");
+                    mySqlCommand.ExecuteNonQuery();
+                }
+                //mySqlConnection.Close();
+            }
+            catch (Exception exception)
+            {
+                Logger.LogError($"[ZaupShop] Database Crashed by Console when trying to create or check existing table {_zaupShop.Configuration.Instance.ItemShopTableName}, reason: {exception.Message}");
+                Logger.LogError($"Database Crashed, reason: {exception.Message}");
             }
         }
 
@@ -56,58 +85,29 @@ namespace Uconomy
             if(_mySqlConnection == null || _mySqlConnection.State != System.Data.ConnectionState.Open)
             try
             {
-                _mySqlConnection = new MySqlConnection(string.Format("SERVER={0};DATABASE={1};UID={2};PASSWORD={3};PORT={4};", _uconomy.Configuration.Instance.DatabaseAddress, _uconomy.Configuration.Instance.DatabaseName, _uconomy.Configuration.Instance.DatabaseUsername, _uconomy.Configuration.Instance.DatabasePassword, _uconomy.Configuration.Instance.DatabasePort));
+                _mySqlConnection = new MySqlConnection(string.Format("SERVER={0};DATABASE={1};UID={2};PASSWORD={3};PORT={4};", _zaupShop.Configuration.Instance.DatabaseAddress, _zaupShop.Configuration.Instance.DatabaseName, _zaupShop.Configuration.Instance.DatabaseUsername, _zaupShop.Configuration.Instance.DatabasePassword, _zaupShop.Configuration.Instance.DatabasePort));
                 _mySqlConnection.Open();
             }
             catch (Exception exception)
             {
-                Logger.LogError($"[Uconomy] Database Crashed, reason: {exception.Message}");
+                Logger.LogError($"[ZaupShop] Instance Connection Database Crashed by Console, reason: {exception.Message}");
             }
             return _mySqlConnection;
         }
 
         /// <summary>
-        /// Add a new player to the uconomy database if not exist
+        /// Get the item cost based on his id
         /// </summary>
-        /// <param name="playerId"></param>
-        /// <param name="balance"></param>
-        public void AddNewPlayer(string playerId, decimal balance)
-        {
-            try
-            {
-                // Instanciate connection
-                MySqlConnection mySqlConnection = CreateConnection();
-                // Instanciate command
-                MySqlCommand mySqlCommand = mySqlConnection.CreateCommand();
-                // Command: Insert new player only if not exist the same steamId
-                mySqlCommand.CommandText = string.Concat("Insert ignore into `", _uconomy.Configuration.Instance.UconomyTableName, "` (`steamId`, `balance`, `lastUpdated`) VALUES ('", playerId, "', '", balance, "', '", DateTime.Now.ToShortDateString(), "');");
-                // Try to connect
-                //Open();
-                // Execute the command
-                mySqlCommand.ExecuteNonQuery();
-                // Close connection
-                //mySqlConnection.Close();
-            }
-            catch (Exception exception)
-            {
-                Logger.LogError($"[Uconomy] Database Crashed by {playerId} from function AddNewPlayer, reason: {exception.Message}");
-            }
-        }
-
-        /// <summary>
-        /// Returns the decimal player balance from the table uconomy
-        /// </summary>
-        /// <param name="playerId"></param>
+        /// <param name="id"></param>
         /// <returns></returns>
-        public decimal GetBalance(string playerId)
+        public decimal GetItemCost(int id)
         {
-            if (_uconomy.Configuration.Instance.xpMode) return (decimal)Rocket.Unturned.Player.UnturnedPlayer.FromCSteamID(new CSteamID(UInt64.Parse(playerId))).Experience;
-            decimal num = new(0);
+            decimal num = 0;
             try
             {
                 MySqlConnection mySqlConnection = CreateConnection();
                 MySqlCommand mySqlCommand = mySqlConnection.CreateCommand();
-                mySqlCommand.CommandText = string.Concat("select `balance` from `", _uconomy.Configuration.Instance.UconomyTableName, "` where `steamId` = '", playerId, "';");
+                mySqlCommand.CommandText = string.Concat("select `cost` from `", _zaupShop.Configuration.Instance.ItemShopTableName, "` where `id` = '", id.ToString(), "';");
                 //mySqlConnection.Open();
                 object obj = mySqlCommand.ExecuteScalar();
                 if (obj != null)
@@ -118,82 +118,106 @@ namespace Uconomy
             }
             catch (Exception exception)
             {
-                Logger.LogError($"[Uconomy] Database Crashed by {playerId} from function GetBalance, reason: {exception.Message}");
+                Logger.LogError($"[ZaupShop] Database Crashed by Console from function GetItemCost, reason: {exception.Message}");
             }
             return num;
         }
 
         /// <summary>
-        /// Make a pay query from other player, returns true if successfuly payed
+        /// Get the vehicle cost based on his id
         /// </summary>
-        /// <param name="payingPlayerId"></param>
-        /// <param name="receivedPlayerId"></param>
-        /// <param name="amount"></param>
+        /// <param name="id"></param>
         /// <returns></returns>
-        public bool PlayerPayPlayer(string payingPlayerId, string receivedPlayerId, decimal amount)
+        public decimal GetVehicleCost(int id)
         {
+            decimal num = 0;
             try
             {
-                decimal payingPlayerBalance = GetBalance(payingPlayerId);
-                if ((payingPlayerBalance - amount) < 0)
+                MySqlConnection mySqlConnection = CreateConnection();
+                MySqlCommand mySqlCommand = mySqlConnection.CreateCommand();
+                mySqlCommand.CommandText = string.Concat("select `cost` from `", _zaupShop.Configuration.Instance.VehicleShopTableName, "` where `id` = '", id.ToString(), "';");
+                //mySqlConnection.Open();
+                object obj = mySqlCommand.ExecuteScalar();
+                if (obj != null)
                 {
-                    return false;
+                    decimal.TryParse(obj.ToString(), out num);
                 }
-
-                RemoveBalance(payingPlayerId, amount);
-                AddBalance(receivedPlayerId, amount);
-                return true;
+                //mySqlConnection.Close();
             }
             catch (Exception exception)
             {
-                Logger.LogError($"[Uconomy] Database Crashed by {payingPlayerId} and {receivedPlayerId} from function PlayerPayPlayer, reason: {exception.Message}");
-                return false;
+                Logger.LogError($"[ZaupShop] Database Crashed by Console from function GetVehicleCost, reason: {exception.Message}");
             }
+            return num;
         }
 
         /// <summary>
-        /// Remove a balance from the player
+        /// Get the player uconomy balance
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public decimal GetBalance(string id)
+        {
+            if (_zaupShop.Configuration.Instance.xpMode)
+            {
+                return (decimal)Rocket.Unturned.Player.UnturnedPlayer.FromCSteamID(new CSteamID(UInt64.Parse(id))).Experience;
+            }
+            decimal num = 0;
+            try
+            {
+                MySqlConnection mySqlConnection = CreateConnection();
+                MySqlCommand mySqlCommand = mySqlConnection.CreateCommand();
+                mySqlCommand.CommandText = string.Concat("select `balance` from `", _zaupShop.Configuration.Instance.UconomyTableName, "` where `steamId` = '", id, "';");
+                //mySqlConnection.Open();
+                object obj = mySqlCommand.ExecuteScalar();
+                if (obj != null)
+                {
+                    decimal.TryParse(obj.ToString(), out num);
+                }
+                //mySqlConnection.Close();
+            }
+            catch (Exception exception)
+            {
+                Logger.LogError($"[ZaupShop] Database Crashed by {id} from function GetBalance, reason: {exception.Message}");
+            }
+            return num;
+        }
+
+        /// <summary>
+        /// Remove a specific amount of player balance
         /// </summary>
         /// <param name="id"></param>
         /// <param name="cost"></param>
         public void RemoveBalance(string id, decimal cost)
         {
-            if (_uconomy.Configuration.Instance.BalanceFgEffectKey != 0)
+            if (_zaupShop.Configuration.Instance.xpMode)
             {
-                EffectManager.sendUIEffect(_uconomy.Configuration.Instance.BalanceFgEffectId, _uconomy.Configuration.Instance.BalanceFgEffectKey, true, (GetBalance(id) - cost).ToString());
-            }
-            if (_uconomy.Configuration.Instance.xpMode)
-            {
-                Rocket.Unturned.Player.UnturnedPlayer.FromCSteamID(new CSteamID(UInt64.Parse(id))).Experience -= (uint) cost;
+                Rocket.Unturned.Player.UnturnedPlayer.FromCSteamID(new CSteamID(UInt64.Parse(id))).Experience -= (uint)cost;
                 return;
             }
             try
             {
                 MySqlConnection mySqlConnection = CreateConnection();
                 MySqlCommand mySqlCommand = mySqlConnection.CreateCommand();
-                mySqlCommand.CommandText = $"update `{_uconomy.Configuration.Instance.UconomyTableName}` set `balance` = `balance` - {cost} where `steamId` = {id};";
+                mySqlCommand.CommandText = $"update `{_zaupShop.Configuration.Instance.UconomyTableName}` set `balance` = `balance` - {cost} where `steamId` = {id};";
                 //mySqlConnection.Open();
                 mySqlCommand.ExecuteNonQuery();
                 //mySqlConnection.Close();
             }
             catch (Exception exception)
             {
-                Logger.LogError($"[Uconomy] Database Crashed by {id} from function RemoveBalance, reason: {exception.Message}");
+                Logger.LogError($"[ZaupShop] Database Crashed by {id} from function RemoveBalance, reason: {exception.Message}");
             }
         }
 
         /// <summary>
-        /// Add more balance to the player
+        /// Add a specific amount to the player balance
         /// </summary>
         /// <param name="id"></param>
         /// <param name="quantity"></param>
         public void AddBalance(string id, decimal quantity)
         {
-            if (_uconomy.Configuration.Instance.BalanceFgEffectKey != 0)
-            {
-                EffectManager.sendUIEffect(_uconomy.Configuration.Instance.BalanceFgEffectId, _uconomy.Configuration.Instance.BalanceFgEffectKey, true, (GetBalance(id)+quantity).ToString());
-            }
-            if (_uconomy.Configuration.Instance.xpMode)
+            if (_zaupShop.Configuration.Instance.xpMode)
             {
                 Rocket.Unturned.Player.UnturnedPlayer.FromCSteamID(new CSteamID(UInt64.Parse(id))).Experience += (uint)quantity;
                 return;
@@ -202,15 +226,43 @@ namespace Uconomy
             {
                 MySqlConnection mySqlConnection = CreateConnection();
                 MySqlCommand mySqlCommand = mySqlConnection.CreateCommand();
-                mySqlCommand.CommandText = $"update `{_uconomy.Configuration.Instance.UconomyTableName}` set `balance` = `balance` + {quantity} where `steamId` = {id};";
+                mySqlCommand.CommandText = $"update `{_zaupShop.Configuration.Instance.UconomyTableName}` set `balance` = `balance` + {quantity} where `steamId` = {id};";
                 //mySqlConnection.Open();
                 mySqlCommand.ExecuteNonQuery();
                 //mySqlConnection.Close();
             }
             catch (Exception exception)
             {
-                Logger.LogError($"[Uconomy] Database Crashed by {id} from function AddBalance, reason: {exception.Message}");
+                Logger.LogError($"[ZaupShop] Database Crashed by {id} from function AddBalance, reason: {exception.Message}");
             }
+        }
+
+        /// <summary>
+        /// Get the sell price from the item id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public decimal GetItemBuyPrice(int id)
+        {
+            decimal num = 0;
+            try
+            {
+                MySqlConnection mySqlConnection = CreateConnection();
+                MySqlCommand mySqlCommand = mySqlConnection.CreateCommand();
+                mySqlCommand.CommandText = string.Concat("select `buyback` from `", _zaupShop.Configuration.Instance.ItemShopTableName, "` where `id` = '", id.ToString(), "';");
+                //mySqlConnection.Open();
+                object obj = mySqlCommand.ExecuteScalar();
+                if (obj != null)
+                {
+                    decimal.TryParse(obj.ToString(), out num);
+                }
+                //mySqlConnection.Close();
+            }
+            catch (Exception exception)
+            {
+                Logger.LogError($"[ZaupShop] Database Crashed by Console from function GetItemBuyPrice, reason: {exception.Message}");
+            }
+            return num;
         }
     }
 }

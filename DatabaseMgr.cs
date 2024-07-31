@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using MySql.Data.MySqlClient;
 using Rocket.Core.Logging;
 using SDG.Unturned;
@@ -160,7 +160,8 @@ namespace Uconomy
         {
             if (_uconomy.Configuration.Instance.BalanceFgEffectKey != 0)
             {
-                EffectManager.sendUIEffect(_uconomy.Configuration.Instance.BalanceFgEffectId, _uconomy.Configuration.Instance.BalanceFgEffectKey, true, (GetBalance(id) - cost).ToString());
+                string bal = (GetBalance(id) - cost).ToString();
+                Rocket.Core.Utils.TaskDispatcher.QueueOnMainThread(() => EffectManager.sendUIEffect(_uconomy.Configuration.Instance.BalanceFgEffectId, _uconomy.Configuration.Instance.BalanceFgEffectKey, true, bal));
             }
             if (_uconomy.Configuration.Instance.xpMode)
             {
@@ -191,7 +192,8 @@ namespace Uconomy
         {
             if (_uconomy.Configuration.Instance.BalanceFgEffectKey != 0)
             {
-                EffectManager.sendUIEffect(_uconomy.Configuration.Instance.BalanceFgEffectId, _uconomy.Configuration.Instance.BalanceFgEffectKey, true, (GetBalance(id)+quantity).ToString());
+                string bal = (GetBalance(id) + quantity).ToString();
+                Rocket.Core.Utils.TaskDispatcher.QueueOnMainThread(()=>EffectManager.sendUIEffect(_uconomy.Configuration.Instance.BalanceFgEffectId, _uconomy.Configuration.Instance.BalanceFgEffectKey, true, bal));
             }
             if (_uconomy.Configuration.Instance.xpMode)
             {

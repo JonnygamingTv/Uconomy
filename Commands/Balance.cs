@@ -19,14 +19,18 @@ namespace Uconomy.Commands
 
         public List<string> Permissions => new();
 
-        public void Execute(IRocketPlayer caller, string[] command)
+        public async void Execute(IRocketPlayer caller, string[] command)
         {
-            UnturnedPlayer player = caller as UnturnedPlayer ?? null;
-            if (player is null)
+            await System.Threading.Tasks.Task.Run(() =>
             {
-                UnturnedChat.Say(caller, UconomyPlugin.instance.Translate("commnad_error_null"));
-            }
-            UnturnedChat.Say(caller, UconomyPlugin.instance.Translate("command_balance_show", UconomyPlugin.instance.Database.GetBalance(player.Id), UconomyPlugin.instance.Configuration.Instance.UconomyCurrencyName));
+                UnturnedPlayer player = caller as UnturnedPlayer ?? null;
+                if (player is null)
+                {
+                    Rocket.Core.Utils.TaskDispatcher.QueueOnMainThread(()=>UnturnedChat.Say(caller, UconomyPlugin.instance.Translate("command_error_null")));
+                }
+                decimal bal = UconomyPlugin.instance.Database.GetBalance(player.Id);
+                Rocket.Core.Utils.TaskDispatcher.QueueOnMainThread(()=>UnturnedChat.Say(caller, UconomyPlugin.instance.Translate("command_balance_show", bal, UconomyPlugin.instance.Configuration.Instance.UconomyCurrencyName)));
+            });
         }
     }
 }

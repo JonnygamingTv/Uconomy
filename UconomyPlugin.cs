@@ -30,14 +30,18 @@ namespace Uconomy
             Logger.Log("Uconomy unloaded.");
         }
 
-        private void OnPlayerConnected(UnturnedPlayer player)
+        private async void OnPlayerConnected(UnturnedPlayer player)
         {
             // Add player if not exist
-            Database.AddNewPlayer(player.Id, Configuration.Instance.InitialBalance);
-            if(Configuration.Instance.BalanceFgEffectKey != 0)
+            await System.Threading.Tasks.Task.Run(() =>
             {
-                EffectManager.sendUIEffect(Configuration.Instance.BalanceFgEffectId, Configuration.Instance.BalanceFgEffectKey, true, Database.GetBalance(player.Id).ToString());
-            }
+                Database.AddNewPlayer(player.Id, Configuration.Instance.InitialBalance);
+                if (Configuration.Instance.BalanceFgEffectKey != 0)
+                {
+                    string bal = Database.GetBalance(player.Id).ToString();
+                    Rocket.Core.Utils.TaskDispatcher.QueueOnMainThread(()=>EffectManager.sendUIEffect(Configuration.Instance.BalanceFgEffectId, Configuration.Instance.BalanceFgEffectKey, true, bal));
+                }
+            });
         }
         private void OnPlayerConnected2(UnturnedPlayer player)
         {

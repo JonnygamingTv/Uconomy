@@ -1,6 +1,7 @@
 ﻿using System;
 using MySql.Data.MySqlClient;
 using Rocket.Core.Logging;
+using Rocket.Unturned.Player;
 using SDG.Unturned;
 using Steamworks;
 
@@ -161,7 +162,12 @@ namespace Uconomy
             if (_uconomy.Configuration.Instance.BalanceFgEffectKey != 0)
             {
                 string bal = (GetBalance(id) - cost).ToString();
-                Rocket.Core.Utils.TaskDispatcher.QueueOnMainThread(() => EffectManager.sendUIEffect(_uconomy.Configuration.Instance.BalanceFgEffectId, _uconomy.Configuration.Instance.BalanceFgEffectKey, true, bal));
+                UnturnedPlayer player = UnturnedPlayer.FromCSteamID(new CSteamID(ulong.Parse(id)));
+                Rocket.Core.Utils.TaskDispatcher.QueueOnMainThread(() =>
+                {
+                    EffectManager.sendUIEffect(_uconomy.Configuration.Instance.BalanceBgEffectId, _uconomy.Configuration.Instance.BalanceBgEffectKey, true, bal);
+                    EffectManager.sendUIEffectText(_uconomy.Configuration.Instance.BalanceFgEffectKey, player.Player.channel.GetOwnerTransportConnection(), true, player.CSteamID.ToString(), bal);
+                });
             }
             if (_uconomy.Configuration.Instance.xpMode)
             {
@@ -193,7 +199,12 @@ namespace Uconomy
             if (_uconomy.Configuration.Instance.BalanceFgEffectKey != 0)
             {
                 string bal = (GetBalance(id) + quantity).ToString();
-                Rocket.Core.Utils.TaskDispatcher.QueueOnMainThread(()=>EffectManager.sendUIEffect(_uconomy.Configuration.Instance.BalanceFgEffectId, _uconomy.Configuration.Instance.BalanceFgEffectKey, true, bal));
+                UnturnedPlayer player = UnturnedPlayer.FromCSteamID(new CSteamID(ulong.Parse(id)));
+                Rocket.Core.Utils.TaskDispatcher.QueueOnMainThread(() =>
+                {
+                    EffectManager.sendUIEffect(_uconomy.Configuration.Instance.BalanceBgEffectId, _uconomy.Configuration.Instance.BalanceBgEffectKey, true, bal);
+                    EffectManager.sendUIEffectText(_uconomy.Configuration.Instance.BalanceFgEffectKey, player.Player.channel.GetOwnerTransportConnection(), true, player.CSteamID.ToString(), bal);
+                });
             }
             if (_uconomy.Configuration.Instance.xpMode)
             {

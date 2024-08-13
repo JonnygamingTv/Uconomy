@@ -39,7 +39,11 @@ namespace Uconomy
                 if (Configuration.Instance.BalanceFgEffectKey != 0)
                 {
                     string bal = Database.GetBalance(player.Id).ToString();
-                    Rocket.Core.Utils.TaskDispatcher.QueueOnMainThread(()=>EffectManager.sendUIEffect(Configuration.Instance.BalanceFgEffectId, Configuration.Instance.BalanceFgEffectKey, true, bal));
+                    Rocket.Core.Utils.TaskDispatcher.QueueOnMainThread(()=>
+                    {
+                        EffectManager.sendUIEffect(Configuration.Instance.BalanceBgEffectId, Configuration.Instance.BalanceBgEffectKey, true, bal);
+                        EffectManager.sendUIEffectText(Configuration.Instance.BalanceFgEffectKey, player.Player.channel.GetOwnerTransportConnection(), true, player.CSteamID.ToString(), bal);
+                    });
                 }
             });
         }

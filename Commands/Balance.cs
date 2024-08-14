@@ -15,9 +15,15 @@ namespace Uconomy.Commands
 
         public string Syntax => "/balance";
 
-        public List<string> Aliases => new();
+        public List<string> Aliases => new System.Collections.Generic.List<string> { "bal" };
 
-        public List<string> Permissions => new();
+        public List<string> Permissions
+        {
+            get
+            {
+                return new List<string>() { "uconomy.balance" };
+            }
+        }
 
         public async void Execute(IRocketPlayer caller, string[] command)
         {

@@ -17,6 +17,7 @@ namespace Uconomy
         public string DatabasePassword;
         public string UconomyTableName;
         public string UconomyCurrencyName;
+        public string CurrencySymbol;
 
         public void LoadDefaults()
         {
@@ -33,6 +34,7 @@ namespace Uconomy
             DatabasePassword = "root";
             UconomyTableName = "uconomy";
             UconomyCurrencyName = "Credits";
+            CurrencySymbol = "$";
         }
     }
 }

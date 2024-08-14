@@ -33,6 +33,7 @@ namespace Uconomy
         private async void OnPlayerConnected(UnturnedPlayer player)
         {
             // Add player if not exist
+            await System.Threading.Tasks.Task.Delay(1500);
             await System.Threading.Tasks.Task.Run(() =>
             {
                 Database.AddNewPlayer(player.Id, Configuration.Instance.InitialBalance);
@@ -41,8 +42,9 @@ namespace Uconomy
                     string bal = Database.GetBalance(player.Id).ToString();
                     Rocket.Core.Utils.TaskDispatcher.QueueOnMainThread(()=>
                     {
-                        EffectManager.sendUIEffect(Configuration.Instance.BalanceBgEffectId, Configuration.Instance.BalanceBgEffectKey, true, bal);
-                        EffectManager.sendUIEffectText(Configuration.Instance.BalanceFgEffectKey, player.Player.channel.GetOwnerTransportConnection(), true, player.CSteamID.ToString(), bal);
+                        EffectManager.sendUIEffect(Configuration.Instance.BalanceBgEffectId, Configuration.Instance.BalanceBgEffectKey, player.Player.channel.GetOwnerTransportConnection(), true, Configuration.Instance.CurrencySymbol, bal);
+                        EffectManager.sendUIEffect(Configuration.Instance.BalanceFgEffectId, Configuration.Instance.BalanceFgEffectKey, player.Player.channel.GetOwnerTransportConnection(), true, Configuration.Instance.CurrencySymbol, Database.GetBalance(player.Id).ToString());
+                        //EffectManager.sendUIEffectText(Configuration.Instance.BalanceFgEffectKey, player.Player.channel.GetOwnerTransportConnection(), true, player.CSteamID.ToString(), bal);
                     });
                 }
             });
@@ -52,7 +54,8 @@ namespace Uconomy
             if(player.Experience == 0) player.Experience = (uint)Configuration.Instance.InitialBalance;
             if (Configuration.Instance.BalanceFgEffectKey != 0)
             {
-                EffectManager.sendUIEffect(Configuration.Instance.BalanceFgEffectId, Configuration.Instance.BalanceFgEffectKey, true, Database.GetBalance(player.Id).ToString());
+                EffectManager.sendUIEffect(Configuration.Instance.BalanceBgEffectId, Configuration.Instance.BalanceBgEffectKey, player.Player.channel.GetOwnerTransportConnection(), true, Configuration.Instance.CurrencySymbol, Database.GetBalance(player.Id).ToString());
+                EffectManager.sendUIEffect(Configuration.Instance.BalanceFgEffectId, Configuration.Instance.BalanceFgEffectKey, player.Player.channel.GetOwnerTransportConnection(), true, Configuration.Instance.CurrencySymbol, Database.GetBalance(player.Id).ToString());
             }
         }
 

@@ -48,7 +48,8 @@ namespace Uconomy
             }
             catch (Exception exception)
             {
-                Logger.LogError($"[Uconomy] Database Crashed by Console when trying to create or check existing table {_uconomy.Configuration.Instance.UconomyTableName}, reason: {exception.Message}");
+                Logger.LogError($"[Uconomy] Database Crashed by Console when trying to create or check existing table {_uconomy.Configuration.Instance.UconomyTableName}, reason: {exception.Message}\n\nEnabling xpMode..");
+                _uconomy.Configuration.Instance.xpMode = true;
             }
         }
 
@@ -165,8 +166,9 @@ namespace Uconomy
                 UnturnedPlayer player = UnturnedPlayer.FromCSteamID(new CSteamID(ulong.Parse(id)));
                 Rocket.Core.Utils.TaskDispatcher.QueueOnMainThread(() =>
                 {
-                    EffectManager.sendUIEffect(_uconomy.Configuration.Instance.BalanceBgEffectId, _uconomy.Configuration.Instance.BalanceBgEffectKey, true, bal);
-                    EffectManager.sendUIEffectText(_uconomy.Configuration.Instance.BalanceFgEffectKey, player.Player.channel.GetOwnerTransportConnection(), true, player.CSteamID.ToString(), bal);
+                    EffectManager.sendUIEffect(_uconomy.Configuration.Instance.BalanceBgEffectId, _uconomy.Configuration.Instance.BalanceBgEffectKey, player.Player.channel.GetOwnerTransportConnection(), true, _uconomy.Configuration.Instance.CurrencySymbol, bal);
+                    EffectManager.sendUIEffect(_uconomy.Configuration.Instance.BalanceFgEffectId, _uconomy.Configuration.Instance.BalanceFgEffectKey, player.Player.channel.GetOwnerTransportConnection(), true, _uconomy.Configuration.Instance.CurrencySymbol, bal);
+                    //EffectManager.sendUIEffectText(_uconomy.Configuration.Instance.BalanceFgEffectKey, player.Player.channel.GetOwnerTransportConnection(), true, player.CSteamID.ToString(), bal);
                 });
             }
             if (_uconomy.Configuration.Instance.xpMode)
@@ -202,8 +204,9 @@ namespace Uconomy
                 UnturnedPlayer player = UnturnedPlayer.FromCSteamID(new CSteamID(ulong.Parse(id)));
                 Rocket.Core.Utils.TaskDispatcher.QueueOnMainThread(() =>
                 {
-                    EffectManager.sendUIEffect(_uconomy.Configuration.Instance.BalanceBgEffectId, _uconomy.Configuration.Instance.BalanceBgEffectKey, true, bal);
-                    EffectManager.sendUIEffectText(_uconomy.Configuration.Instance.BalanceFgEffectKey, player.Player.channel.GetOwnerTransportConnection(), true, player.CSteamID.ToString(), bal);
+                    EffectManager.sendUIEffect(_uconomy.Configuration.Instance.BalanceBgEffectId, _uconomy.Configuration.Instance.BalanceBgEffectKey, player.Player.channel.GetOwnerTransportConnection(), true, _uconomy.Configuration.Instance.CurrencySymbol, bal);
+                    EffectManager.sendUIEffect(_uconomy.Configuration.Instance.BalanceFgEffectId, _uconomy.Configuration.Instance.BalanceFgEffectKey, player.Player.channel.GetOwnerTransportConnection(), true, _uconomy.Configuration.Instance.CurrencySymbol, bal);
+                    //EffectManager.sendUIEffectText(_uconomy.Configuration.Instance.BalanceFgEffectKey, player.Player.channel.GetOwnerTransportConnection(), true, player.CSteamID.ToString(), bal);
                 });
             }
             if (_uconomy.Configuration.Instance.xpMode)

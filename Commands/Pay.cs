@@ -16,9 +16,15 @@ namespace Uconomy.Commands
 
         public string Syntax => "/pay [PlayerName] [Amount]";
 
-        public List<string> Aliases => new();
+        public List<string> Aliases => new System.Collections.Generic.List<string> { "payplayer" };
 
-        public List<string> Permissions => new();
+        public List<string> Permissions
+        {
+            get
+            {
+                return new List<string>() { "uconomy.pay" };
+            }
+        }
 
         public async void Execute(IRocketPlayer caller, string[] command)
         {

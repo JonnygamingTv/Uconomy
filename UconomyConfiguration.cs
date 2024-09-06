@@ -10,6 +10,7 @@ namespace Uconomy
         public short BalanceBgEffectKey;
         public ushort BalanceFgEffectId;
         public short BalanceFgEffectKey;
+        public float SalaryInterval;
         public int DatabasePort;
         public string DatabaseAddress;
         public string DatabaseName;
@@ -27,6 +28,7 @@ namespace Uconomy
             BalanceBgEffectKey = short.MaxValue;
             BalanceFgEffectId = 42701;
             BalanceFgEffectKey = short.MaxValue;
+            SalaryInterval = 3600;
             DatabasePort = 3306;
             DatabaseAddress = "127.0.0.1";
             DatabaseName = "unturned";

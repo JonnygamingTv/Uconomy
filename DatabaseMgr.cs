@@ -141,7 +141,6 @@ namespace Uconomy
                 {
                     return false;
                 }
-
                 RemoveBalance(payingPlayerId, amount);
                 AddBalance(receivedPlayerId, amount);
                 return true;

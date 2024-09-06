@@ -12,7 +12,7 @@ namespace Uconomy.Commands
 
         public string Name => "pay";
 
-        public string Help => "Transfer to a player your currency";
+        public string Help => "Transfer your currency to a player";
 
         public string Syntax => "/pay [PlayerName] [Amount]";
 
@@ -65,7 +65,7 @@ namespace Uconomy.Commands
                 if (success)
                 {
                     // Inform paying player
-                    Rocket.Core.Utils.TaskDispatcher.QueueOnMainThread(()=>UnturnedChat.Say(payingPlayer, UconomyPlugin.instance.Translate("command_pay_private", command[1], command[0])));
+                    Rocket.Core.Utils.TaskDispatcher.QueueOnMainThread(()=>UnturnedChat.Say(payingPlayer, UconomyPlugin.instance.Translate("command_pay_private", command[1], receivedPlayer.DisplayName)));
                     // Inform received player
                     Rocket.Core.Utils.TaskDispatcher.QueueOnMainThread(()=>UnturnedChat.Say(receivedPlayer, UconomyPlugin.instance.Translate("command_pay_console", command[1], payingPlayer.DisplayName)));
                 }

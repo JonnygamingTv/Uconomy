@@ -74,11 +74,11 @@ namespace Uconomy
             foreach(SteamPlayer client in Provider.clients)
             {
                 UnturnedPlayer P = UnturnedPlayer.FromSteamPlayer(client);
-                Rocket.API.Serialisation.Permission Salary = P.GetPermissions().Find(perm => perm.Name.Substring(0, 19) == "avi.economy.salary.");
+                Rocket.API.Serialisation.Permission Salary = P.GetPermissions().Find(perm => perm.Name.Length>19&& perm.Name.Substring(0, 19) == "avi.economy.salary.");
                 if(Salary != null && decimal.TryParse(Salary.Name.Substring(19), out decimal Sal))
                 {
                     Database.AddBalance(P.Id, Sal);
-                    Rocket.Core.Utils.TaskDispatcher.QueueOnMainThread(() => Rocket.Unturned.Chat.UnturnedChat.Say(P, Translate("salary_recieved", Sal.ToString())));
+                    Rocket.Core.Utils.TaskDispatcher.QueueOnMainThread(() => Rocket.Unturned.Chat.UnturnedChat.Say(P, Translate("salary_received", Sal.ToString())));
                 }
             }
             StartCoroutine(nameof(Salloop));
@@ -95,7 +95,7 @@ namespace Uconomy
             {"command_pay_private", "You paid {0} to {1}"},
             {"command_pay_console", "You received a payment of {0} from {1} "},
             {"command_pay_other_private", "You received a payment of {0} {1} from {2}"},
-            {"salary_recieved", "You recieved your salary of {0}." }
+            {"salary_received", "You received your salary of {0}." }
         };
     }
 }

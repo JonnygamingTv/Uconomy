@@ -5,12 +5,12 @@ namespace Uconomy
     public class UconomyConfiguration : IRocketPluginConfiguration
     {
         public bool xpMode;
-        public decimal InitialBalance;
         public ushort BalanceBgEffectId;
-        public short BalanceBgEffectKey;
         public ushort BalanceFgEffectId;
+        public short BalanceBgEffectKey;
         public short BalanceFgEffectKey;
         public float SalaryInterval;
+        public decimal InitialBalance;
         public int DatabasePort;
         public string DatabaseAddress;
         public string DatabaseName;
@@ -19,6 +19,7 @@ namespace Uconomy
         public string UconomyTableName;
         public string UconomyCurrencyName;
         public string CurrencySymbol;
+        public string UIColor;
 
         public void LoadDefaults()
         {
@@ -37,6 +38,7 @@ namespace Uconomy
             UconomyTableName = "uconomy";
             UconomyCurrencyName = "Credits";
             CurrencySymbol = "$";
+            UIColor = "white";
         }
     }
 }

@@ -166,8 +166,7 @@ namespace Uconomy
                 Rocket.Core.Utils.TaskDispatcher.QueueOnMainThread(() =>
                 {
                     EffectManager.sendUIEffect(_uconomy.Configuration.Instance.BalanceBgEffectId, _uconomy.Configuration.Instance.BalanceBgEffectKey, player.Player.channel.GetOwnerTransportConnection(), true, _uconomy.Configuration.Instance.CurrencySymbol, bal);
-                    EffectManager.sendUIEffect(_uconomy.Configuration.Instance.BalanceFgEffectId, _uconomy.Configuration.Instance.BalanceFgEffectKey, player.Player.channel.GetOwnerTransportConnection(), true, _uconomy.Configuration.Instance.CurrencySymbol, bal);
-                    //EffectManager.sendUIEffectText(_uconomy.Configuration.Instance.BalanceFgEffectKey, player.Player.channel.GetOwnerTransportConnection(), true, player.CSteamID.ToString(), bal);
+                    _uconomy.SendUI(player, bal);
                 });
             }
             if (_uconomy.Configuration.Instance.xpMode)
@@ -204,8 +203,7 @@ namespace Uconomy
                 Rocket.Core.Utils.TaskDispatcher.QueueOnMainThread(() =>
                 {
                     EffectManager.sendUIEffect(_uconomy.Configuration.Instance.BalanceBgEffectId, _uconomy.Configuration.Instance.BalanceBgEffectKey, player.Player.channel.GetOwnerTransportConnection(), true, _uconomy.Configuration.Instance.CurrencySymbol, bal);
-                    EffectManager.sendUIEffect(_uconomy.Configuration.Instance.BalanceFgEffectId, _uconomy.Configuration.Instance.BalanceFgEffectKey, player.Player.channel.GetOwnerTransportConnection(), true, _uconomy.Configuration.Instance.CurrencySymbol, bal);
-                    //EffectManager.sendUIEffectText(_uconomy.Configuration.Instance.BalanceFgEffectKey, player.Player.channel.GetOwnerTransportConnection(), true, player.CSteamID.ToString(), bal);
+                    _uconomy.SendUI(player, bal);
                 });
             }
             if (_uconomy.Configuration.Instance.xpMode)

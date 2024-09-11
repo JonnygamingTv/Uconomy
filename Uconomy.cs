@@ -118,6 +118,15 @@ namespace fr34kyn01535.Uconomy
             UnturnedPlayer player = UnturnedPlayer.FromCSteamID(new Steamworks.CSteamID(ulong.Parse(steamId)));
             OnBalanceUpdate(player, amt);
         }
+        internal void OnBalanceChecked(string steamId, decimal balance)
+        {
+            if (OnBalanceCheck == null)
+            {
+                return;
+            }
+            UnturnedPlayer player = UnturnedPlayer.FromCSteamID(new Steamworks.CSteamID(ulong.Parse(steamId)));
+            OnBalanceCheck(player, balance);
+        }
         // Token: 0x14000001 RID: 1
         // (add) Token: 0x0600001B RID: 27 RVA: 0x000029BC File Offset: 0x00000BBC
         // (remove) Token: 0x0600001C RID: 28 RVA: 0x000029F4 File Offset: 0x00000BF4

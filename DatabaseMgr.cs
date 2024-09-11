@@ -122,6 +122,7 @@ namespace fr34kyn01535.Uconomy
             {
                 Logger.LogError($"[Uconomy] Database Crashed by {playerId} from function GetBalance, reason: {exception.Message}");
             }
+            Uconomy.Instance.OnBalanceChecked(playerId, num);
             return num;
         }
 
@@ -187,6 +188,7 @@ namespace fr34kyn01535.Uconomy
             {
                 Logger.LogError($"[Uconomy] Database Crashed by {id} from function RemoveBalance, reason: {exception.Message}");
             }
+            Uconomy.Instance.BalanceUpdated(id, -cost);
         }
 
         public decimal IncreaseBalance(string id, decimal increaseBy)

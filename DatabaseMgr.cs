@@ -194,7 +194,6 @@ namespace fr34kyn01535.Uconomy
         public decimal IncreaseBalance(string id, decimal increaseBy)
         {
             AddBalance(id, increaseBy);
-            Uconomy.Instance.BalanceUpdated(id, increaseBy);
             return GetBalance(id);
         }
 

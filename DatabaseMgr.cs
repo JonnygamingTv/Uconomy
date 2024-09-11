@@ -5,14 +5,14 @@ using Rocket.Unturned.Player;
 using SDG.Unturned;
 using Steamworks;
 
-namespace Uconomy
+namespace fr34kyn01535.Uconomy
 {
     public class DatabaseMgr
     {
-        private readonly UconomyPlugin _uconomy;
+        private readonly Uconomy _uconomy;
         private MySqlConnection _mySqlConnection = null;
 
-        internal DatabaseMgr(UconomyPlugin uconomy)
+        internal DatabaseMgr(Uconomy uconomy)
         {
             _uconomy = uconomy;
             CheckSchema();
@@ -192,7 +192,7 @@ namespace Uconomy
         public decimal IncreaseBalance(string id, decimal increaseBy)
         {
             AddBalance(id, increaseBy);
-            UconomyPlugin.instance.BalanceUpdated(id, increaseBy);
+            Uconomy.Instance.BalanceUpdated(id, increaseBy);
             return GetBalance(id);
         }
 
@@ -231,7 +231,7 @@ namespace Uconomy
             {
                 Logger.LogError($"[Uconomy] Database Crashed by {id} from function AddBalance, reason: {exception.Message}");
             }
-            UconomyPlugin.instance.BalanceUpdated(id, quantity);
+            Uconomy.Instance.BalanceUpdated(id, quantity);
         }
     }
 }

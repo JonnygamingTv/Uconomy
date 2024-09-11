@@ -4,7 +4,7 @@ using Rocket.Unturned.Player;
 using System;
 using System.Collections.Generic;
 
-namespace Uconomy.Commands
+namespace fr34kyn01535.Uconomy.Commands
 {
     public class AdminPay : IRocketCommand
     {
@@ -32,27 +32,27 @@ namespace Uconomy.Commands
             {
                 if (command.Length != 2)
                 {
-                    Rocket.Core.Utils.TaskDispatcher.QueueOnMainThread(()=>UnturnedChat.Say(caller, UconomyPlugin.instance.Translate("command_pay_invalid")));
+                    Rocket.Core.Utils.TaskDispatcher.QueueOnMainThread(()=>UnturnedChat.Say(caller, Uconomy.Instance.Translate("command_pay_invalid")));
                     return;
                 }
                 // Get Received player
                 UnturnedPlayer receivedPlayer = UnturnedPlayer.FromName(command[0]);
                 if (receivedPlayer is null)
                 {
-                    Rocket.Core.Utils.TaskDispatcher.QueueOnMainThread(()=>UnturnedChat.Say(caller, UconomyPlugin.instance.Translate("command_pay_error_player_not_found")));
+                    Rocket.Core.Utils.TaskDispatcher.QueueOnMainThread(()=>UnturnedChat.Say(caller, Uconomy.Instance.Translate("command_pay_error_player_not_found")));
                     return;
                 }
                 // Try to pay
                 try
                 {
-                    UconomyPlugin.instance.Database.AddBalance(receivedPlayer.Id, decimal.Parse(command[1]));
-                    Rocket.Core.Utils.TaskDispatcher.QueueOnMainThread(() => UnturnedChat.Say(caller, UconomyPlugin.instance.Translate("command_pay_private", command[1], receivedPlayer.DisplayName)));
+                    Uconomy.Instance.Database.AddBalance(receivedPlayer.Id, decimal.Parse(command[1]));
+                    Rocket.Core.Utils.TaskDispatcher.QueueOnMainThread(() => UnturnedChat.Say(caller, Uconomy.Instance.Translate("command_pay_private", command[1], receivedPlayer.DisplayName)));
                     // Inform received player
-                    Rocket.Core.Utils.TaskDispatcher.QueueOnMainThread(() => UnturnedChat.Say(receivedPlayer, UconomyPlugin.instance.Translate("command_pay_console", command[1], caller.DisplayName)));
+                    Rocket.Core.Utils.TaskDispatcher.QueueOnMainThread(() => UnturnedChat.Say(receivedPlayer, Uconomy.Instance.Translate("command_pay_console", command[1], caller.DisplayName)));
                 }
                 catch (Exception)
                 {
-                    Rocket.Core.Utils.TaskDispatcher.QueueOnMainThread(()=>UnturnedChat.Say(caller, UconomyPlugin.instance.Translate("command_pay_error_invalid_amount")));
+                    Rocket.Core.Utils.TaskDispatcher.QueueOnMainThread(()=>UnturnedChat.Say(caller, Uconomy.Instance.Translate("command_pay_error_invalid_amount")));
                     return;
                 }
             });

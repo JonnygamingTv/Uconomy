@@ -1,6 +1,6 @@
 ﻿using Rocket.API;
 
-namespace Uconomy
+namespace fr34kyn01535.Uconomy
 {
     public class UconomyConfiguration : IRocketPluginConfiguration
     {

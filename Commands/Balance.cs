@@ -3,7 +3,7 @@ using Rocket.Unturned.Chat;
 using Rocket.Unturned.Player;
 using System.Collections.Generic;
 
-namespace Uconomy.Commands
+namespace fr34kyn01535.Uconomy.Commands
 {
     public class Balance : IRocketCommand
     {
@@ -32,10 +32,10 @@ namespace Uconomy.Commands
                 UnturnedPlayer player = caller as UnturnedPlayer ?? null;
                 if (player is null)
                 {
-                    Rocket.Core.Utils.TaskDispatcher.QueueOnMainThread(()=>UnturnedChat.Say(caller, UconomyPlugin.instance.Translate("command_error_null")));
+                    Rocket.Core.Utils.TaskDispatcher.QueueOnMainThread(()=>UnturnedChat.Say(caller, Uconomy.Instance.Translate("command_error_null")));
                 }
-                decimal bal = UconomyPlugin.instance.Database.GetBalance(player.Id);
-                Rocket.Core.Utils.TaskDispatcher.QueueOnMainThread(()=>UnturnedChat.Say(caller, UconomyPlugin.instance.Translate("command_balance_show", bal, UconomyPlugin.instance.Configuration.Instance.UconomyCurrencyName)));
+                decimal bal = Uconomy.Instance.Database.GetBalance(player.Id);
+                Rocket.Core.Utils.TaskDispatcher.QueueOnMainThread(()=>UnturnedChat.Say(caller, Uconomy.Instance.Translate("command_balance_show", bal, Uconomy.Instance.Configuration.Instance.UconomyCurrencyName)));
             });
         }
     }

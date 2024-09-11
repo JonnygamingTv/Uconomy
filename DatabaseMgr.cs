@@ -189,6 +189,13 @@ namespace Uconomy
             }
         }
 
+        public decimal IncreaseBalance(string id, decimal increaseBy)
+        {
+            AddBalance(id, increaseBy);
+            UconomyPlugin.instance.BalanceUpdated(id, increaseBy);
+            return GetBalance(id);
+        }
+
         /// <summary>
         /// Add more balance to the player
         /// </summary>
@@ -224,6 +231,7 @@ namespace Uconomy
             {
                 Logger.LogError($"[Uconomy] Database Crashed by {id} from function AddBalance, reason: {exception.Message}");
             }
+            UconomyPlugin.instance.BalanceUpdated(id, quantity);
         }
     }
 }

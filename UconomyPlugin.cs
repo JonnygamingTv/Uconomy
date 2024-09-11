@@ -108,5 +108,40 @@ namespace Uconomy
             {"command_pay_other_private", "You received a payment of {0} {1} from {2}"},
             {"salary_received", "You received your salary of {0}." }
         };
+
+        internal void BalanceUpdated(string steamId, decimal amt)
+        {
+            if (OnBalanceUpdate == null)
+            {
+                return;
+            }
+            UnturnedPlayer player = UnturnedPlayer.FromCSteamID(new Steamworks.CSteamID(ulong.Parse(steamId)));
+            OnBalanceUpdate(player, amt);
+        }
+        // Token: 0x14000001 RID: 1
+        // (add) Token: 0x0600001B RID: 27 RVA: 0x000029BC File Offset: 0x00000BBC
+        // (remove) Token: 0x0600001C RID: 28 RVA: 0x000029F4 File Offset: 0x00000BF4
+        public event PlayerBalanceUpdate OnBalanceUpdate;
+
+        // Token: 0x14000002 RID: 2
+        // (add) Token: 0x0600001D RID: 29 RVA: 0x00002A2C File Offset: 0x00000C2C
+        // (remove) Token: 0x0600001E RID: 30 RVA: 0x00002A64 File Offset: 0x00000C64
+        public event PlayerBalanceCheck OnBalanceCheck;
+
+        // Token: 0x14000003 RID: 3
+        // (add) Token: 0x0600001F RID: 31 RVA: 0x00002A9C File Offset: 0x00000C9C
+        // (remove) Token: 0x06000020 RID: 32 RVA: 0x00002AD4 File Offset: 0x00000CD4
+        public event PlayerPay OnPlayerPay;
+        // Token: 0x02000007 RID: 7
+        // (Invoke) Token: 0x06000028 RID: 40
+        public delegate void PlayerBalanceUpdate(UnturnedPlayer player, decimal amt);
+
+        // Token: 0x02000008 RID: 8
+        // (Invoke) Token: 0x0600002C RID: 44
+        public delegate void PlayerBalanceCheck(UnturnedPlayer player, decimal balance);
+
+        // Token: 0x02000009 RID: 9
+        // (Invoke) Token: 0x06000030 RID: 48
+        public delegate void PlayerPay(UnturnedPlayer sender, string receiver, decimal amt);
     }
 }

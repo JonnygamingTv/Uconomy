@@ -26,7 +26,7 @@ namespace fr34kyn01535.Uconomy
                 Offload = Task.Run(() => StartCoroutine(nameof(Salloop)));
             }
             Instance = this;
-            Logger.Log("Uconomy instanciated, restored by LeandroTheDev");
+            Logger.Log("Uconomy loaded, restored by LeandroTheDev, modified by JonHosting.com");
         }
         protected override void Unload()
         {

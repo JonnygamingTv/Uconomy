@@ -12,8 +12,8 @@ namespace fr34kyn01535.Uconomy
 {
     public class Uconomy : RocketPlugin<UconomyConfiguration>
     {
-        public static Uconomy Instance { get; private set; }
-        public DatabaseMgr Database;
+        public static Uconomy Instance;
+        public DatabaseManager Database;
         Task Offload;
         protected override void Load()
         {
@@ -127,6 +127,16 @@ namespace fr34kyn01535.Uconomy
             UnturnedPlayer player = UnturnedPlayer.FromCSteamID(new Steamworks.CSteamID(ulong.Parse(steamId)));
             OnBalanceCheck(player, balance);
         }
+        internal void HasBeenPayed(UnturnedPlayer sender, string receiver, decimal amt)
+        {
+            PlayerPay onPlayerPay = OnPlayerPay;
+            if (onPlayerPay == null)
+            {
+                return;
+            }
+            onPlayerPay(sender, receiver, amt);
+        }
+
         // Token: 0x14000001 RID: 1
         // (add) Token: 0x0600001B RID: 27 RVA: 0x000029BC File Offset: 0x00000BBC
         // (remove) Token: 0x0600001C RID: 28 RVA: 0x000029F4 File Offset: 0x00000BF4

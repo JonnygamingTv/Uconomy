@@ -14,7 +14,7 @@ namespace fr34kyn01535.Uconomy
     {
         public static Uconomy Instance;
         public DatabaseManager Database;
-        Task Offload;
+        System.Threading.Timer Offload;
         protected override void Load()
         {
             Instance = this;
@@ -23,7 +23,14 @@ namespace fr34kyn01535.Uconomy
             else if (Configuration.Instance.InitialBalance != 0) U.Events.OnPlayerConnected += OnPlayerConnected2;
             if(Configuration.Instance.SalaryInterval != 0)
             {
-                Offload = Task.Run(() => StartCoroutine(nameof(Salloop)));
+                if (Configuration.Instance.FirstOrLastSalaryPermission == FindFirstorLast.FIRST)
+                {
+                    Offload = new System.Threading.Timer(_ => Salloop(), null, System.TimeSpan.FromSeconds(Configuration.Instance.SalaryInterval), System.TimeSpan.FromSeconds(Configuration.Instance.SalaryInterval));
+                }
+                else
+                {
+                    Offload = new System.Threading.Timer(_ => SalloopB(), null, System.TimeSpan.FromSeconds(Configuration.Instance.SalaryInterval), System.TimeSpan.FromSeconds(Configuration.Instance.SalaryInterval));
+                }
             }
             Instance = this;
             Logger.Log("Uconomy loaded, restored by LeandroTheDev, modified by JonHosting.com");
@@ -35,17 +42,18 @@ namespace fr34kyn01535.Uconomy
             if (!Configuration.Instance.xpMode) U.Events.OnPlayerConnected -= OnPlayerConnected;
             else if (Configuration.Instance.InitialBalance != 0) U.Events.OnPlayerConnected -= OnPlayerConnected2;
             StopAllCoroutines();
-            if (Configuration.Instance.SalaryInterval != 0) Offload.Dispose();
+            Offload?.Dispose();
             Logger.Log("Uconomy unloaded.");
         }
 
         public void SendUI(UnturnedPlayer player, string bal = "0") {
+            EffectAsset _asset = (EffectAsset)Assets.find(EAssetType.EFFECT, Configuration.Instance.BalanceFgEffectId);
             if (Configuration.Instance.UIColor!="") {
-                EffectManager.sendUIEffect(Configuration.Instance.BalanceFgEffectId, Configuration.Instance.BalanceFgEffectKey, player.Player.channel.GetOwnerTransportConnection(), true, Configuration.Instance.UIColor, Configuration.Instance.CurrencySymbol, bal);
+                EffectManager.SendUIEffect(_asset, Configuration.Instance.BalanceFgEffectKey, player.Player.channel.GetOwnerTransportConnection(), true, Configuration.Instance.UIColor, Configuration.Instance.CurrencySymbol, bal);
             }
             else
             {
-                EffectManager.sendUIEffect(Configuration.Instance.BalanceFgEffectId, Configuration.Instance.BalanceFgEffectKey, player.Player.channel.GetOwnerTransportConnection(), true, Configuration.Instance.CurrencySymbol, bal);
+                EffectManager.SendUIEffect(_asset, Configuration.Instance.BalanceFgEffectKey, player.Player.channel.GetOwnerTransportConnection(), true, Configuration.Instance.CurrencySymbol, bal);
             }
         }
 
@@ -59,9 +67,10 @@ namespace fr34kyn01535.Uconomy
                 if (Configuration.Instance.BalanceFgEffectKey != 0)
                 {
                     string bal = Database.GetBalance(player.Id).ToString();
+                    EffectAsset _asset = (EffectAsset)Assets.find(EAssetType.EFFECT, Configuration.Instance.BalanceBgEffectId);
                     Rocket.Core.Utils.TaskDispatcher.QueueOnMainThread(()=>
                     {
-                        EffectManager.sendUIEffect(Configuration.Instance.BalanceBgEffectId, Configuration.Instance.BalanceBgEffectKey, player.Player.channel.GetOwnerTransportConnection(), true, Configuration.Instance.CurrencySymbol, bal);
+                        EffectManager.SendUIEffect(_asset, Configuration.Instance.BalanceBgEffectKey, player.Player.channel.GetOwnerTransportConnection(), true, Configuration.Instance.CurrencySymbol, bal);
                         SendUI(player, bal);
                         //EffectManager.sendUIEffectText(Configuration.Instance.BalanceFgEffectKey, player.Player.channel.GetOwnerTransportConnection(), true, player.CSteamID.ToString(), bal);
                     });
@@ -74,14 +83,14 @@ namespace fr34kyn01535.Uconomy
             if (Configuration.Instance.BalanceFgEffectKey != 0)
             {
                 string bal = Database.GetBalance(player.Id).ToString();
-                EffectManager.sendUIEffect(Configuration.Instance.BalanceBgEffectId, Configuration.Instance.BalanceBgEffectKey, player.Player.channel.GetOwnerTransportConnection(), true, Configuration.Instance.CurrencySymbol, bal);
+                EffectAsset _asset = (EffectAsset)Assets.find(EAssetType.EFFECT, Configuration.Instance.BalanceBgEffectId);
+                EffectManager.SendUIEffect(_asset, Configuration.Instance.BalanceBgEffectKey, player.Player.channel.GetOwnerTransportConnection(), true, Configuration.Instance.CurrencySymbol, bal);
                 SendUI(player, bal);
             }
         }
 
-        private IEnumerator Salloop()
+        private void Salloop()
         {
-            yield return new UnityEngine.WaitForSeconds(Configuration.Instance.SalaryInterval);
             foreach(SteamPlayer client in Provider.clients)
             {
                 UnturnedPlayer P = UnturnedPlayer.FromSteamPlayer(client);
@@ -92,7 +101,19 @@ namespace fr34kyn01535.Uconomy
                     Rocket.Core.Utils.TaskDispatcher.QueueOnMainThread(() => Rocket.Unturned.Chat.UnturnedChat.Say(P, Translate("salary_received", Sal.ToString())));
                 }
             }
-            StartCoroutine(nameof(Salloop));
+        }
+        private void SalloopB()
+        {
+            foreach (SteamPlayer client in Provider.clients)
+            {
+                UnturnedPlayer P = UnturnedPlayer.FromSteamPlayer(client);
+                Rocket.API.Serialisation.Permission Salary = P.GetPermissions().FindLast(perm => perm.Name.Length > 19 && perm.Name.Substring(0, 19) == "avi.economy.salary.");
+                if (Salary != null && decimal.TryParse(Salary.Name.Substring(19), out decimal Sal))
+                {
+                    Database.AddBalance(P.Id, Sal);
+                    Rocket.Core.Utils.TaskDispatcher.QueueOnMainThread(() => Rocket.Unturned.Chat.UnturnedChat.Say(P, Translate("salary_received", Sal.ToString())));
+                }
+            }
         }
 
         public override TranslationList DefaultTranslations => new TranslationList

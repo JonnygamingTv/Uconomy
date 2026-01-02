@@ -7,7 +7,7 @@ namespace fr34kyn01535.Uconomy.Commands
 {
     public class Balance : IRocketCommand
     {
-        public AllowedCaller AllowedCaller => AllowedCaller.Player;
+        public AllowedCaller AllowedCaller => AllowedCaller.Both;
 
         public string Name => "balance";
 
@@ -15,7 +15,7 @@ namespace fr34kyn01535.Uconomy.Commands
 
         public string Syntax => "/balance";
 
-        public List<string> Aliases => new System.Collections.Generic.List<string> { "bal" };
+        public List<string> Aliases => new System.Collections.Generic.List<string> { "bal", "saldo" };
 
         public List<string> Permissions
         {

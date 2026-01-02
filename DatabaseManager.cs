@@ -1,5 +1,5 @@
 ﻿using System;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 using Rocket.Core.Logging;
 using Rocket.Unturned.Player;
 using SDG.Unturned;
@@ -164,9 +164,10 @@ namespace fr34kyn01535.Uconomy
             {
                 string bal = (GetBalance(id) - cost).ToString();
                 UnturnedPlayer player = UnturnedPlayer.FromCSteamID(new CSteamID(ulong.Parse(id)));
+                EffectAsset _asset = (EffectAsset)Assets.find(EAssetType.EFFECT, _uconomy.Configuration.Instance.BalanceBgEffectId);
                 Rocket.Core.Utils.TaskDispatcher.QueueOnMainThread(() =>
                 {
-                    EffectManager.sendUIEffect(_uconomy.Configuration.Instance.BalanceBgEffectId, _uconomy.Configuration.Instance.BalanceBgEffectKey, player.Player.channel.GetOwnerTransportConnection(), true, _uconomy.Configuration.Instance.CurrencySymbol, bal);
+                    EffectManager.SendUIEffect(_asset, _uconomy.Configuration.Instance.BalanceBgEffectKey, player.Player.channel.GetOwnerTransportConnection(), true, _uconomy.Configuration.Instance.CurrencySymbol, bal);
                     _uconomy.SendUI(player, bal);
                 });
             }
@@ -208,9 +209,10 @@ namespace fr34kyn01535.Uconomy
             {
                 string bal = (GetBalance(id) + quantity).ToString();
                 UnturnedPlayer player = UnturnedPlayer.FromCSteamID(new CSteamID(ulong.Parse(id)));
+                EffectAsset _asset = (EffectAsset)Assets.find(EAssetType.EFFECT, _uconomy.Configuration.Instance.BalanceBgEffectId);
                 Rocket.Core.Utils.TaskDispatcher.QueueOnMainThread(() =>
                 {
-                    EffectManager.sendUIEffect(_uconomy.Configuration.Instance.BalanceBgEffectId, _uconomy.Configuration.Instance.BalanceBgEffectKey, player.Player.channel.GetOwnerTransportConnection(), true, _uconomy.Configuration.Instance.CurrencySymbol, bal);
+                    EffectManager.SendUIEffect(_asset, _uconomy.Configuration.Instance.BalanceBgEffectKey, player.Player.channel.GetOwnerTransportConnection(), true, _uconomy.Configuration.Instance.CurrencySymbol, bal);
                     _uconomy.SendUI(player, bal);
                 });
             }

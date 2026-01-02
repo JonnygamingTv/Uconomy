@@ -30,8 +30,11 @@
     <Reference Include="com.rlabrecque.steamworks.net">
       <HintPath>..\..\..\SteamLibrary\steamapps\common\Unturned\Unturned_Data\Managed\com.rlabrecque.steamworks.net.dll</HintPath>
     </Reference>
-    <Reference Include="MySql.Data">
-      <HintPath>Libs\MySql.Data.dll</HintPath>
+    <Reference Include="MySqlConnector">
+      <HintPath>Libs\MySqlConnector.dll</HintPath>
+    </Reference>
+    <Reference Include="netstandard">
+      <HintPath>..\..\AdvancedZones-master\AdvancedZones-master\lib\netstandard.dll</HintPath>
     </Reference>
     <Reference Include="Rocket.API">
       <HintPath>..\..\..\SteamLibrary\steamapps\common\Unturned\Extras\Rocket.Unturned\Rocket.API.dll</HintPath>

@@ -20,6 +20,7 @@ namespace fr34kyn01535.Uconomy
         public string UconomyCurrencyName;
         public string CurrencySymbol;
         public string UIColor;
+        public FindFirstorLast FirstOrLastSalaryPermission;
 
         public void LoadDefaults()
         {
@@ -39,6 +40,12 @@ namespace fr34kyn01535.Uconomy
             UconomyCurrencyName = "Credits";
             CurrencySymbol = "$";
             UIColor = "white";
+            FirstOrLastSalaryPermission = FindFirstorLast.FIRST;
         }
+    }
+    public enum FindFirstorLast
+    {
+        FIRST,
+        LAST
     }
 }

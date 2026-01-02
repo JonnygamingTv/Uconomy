@@ -16,7 +16,7 @@ namespace fr34kyn01535.Uconomy.Commands
 
         public string Syntax => "/pay [PlayerName] [Amount]";
 
-        public List<string> Aliases => new System.Collections.Generic.List<string> { "payplayer" };
+        public List<string> Aliases => new System.Collections.Generic.List<string> { "payplayer", "pagar" };
 
         public List<string> Permissions
         {

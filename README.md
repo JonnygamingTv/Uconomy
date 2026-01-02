@@ -10,7 +10,7 @@ Usage:
 
 Configuring:
 Don't forget to add the commands /balance and /pay into ``Permissions.config.xml``
-```xml
+```
 <Group>
   <Id>default</Id>
   <DisplayName>Guest</DisplayName>
